@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("messages")
+@RequestMapping("message")
 public class CarriveMessageController {
 
     @Autowired
@@ -25,7 +25,7 @@ public class CarriveMessageController {
     }
 
     @PostMapping("send-message")
-    public ResponseEntity<MessageResponse> sendMessage(@RequestParam("idConversation") String idConversation, @RequestBody MessageDto message) {
+    public ResponseEntity<MessageResponse> sendMessage(@RequestParam("id_conversation") String idConversation, @RequestBody MessageDto message) {
         return service.sendMessage(idConversation, message);
     }
 }
