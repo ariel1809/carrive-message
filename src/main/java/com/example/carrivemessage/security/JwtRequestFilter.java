@@ -1,7 +1,9 @@
 package com.example.carrivemessage.security;
 
 import com.manage.carrive.entity.Driver;
+import com.manage.carrive.entity.Passenger;
 import com.manage.carriveutility.repository.DriverRepository;
+import com.manage.carriveutility.repository.PassengerRepository;
 import io.jsonwebtoken.*;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -30,7 +32,11 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Autowired
     private DriverRepository driverRepository;
 
+    @Autowired
+    private PassengerRepository passengerRepository;
+
     public static Driver driver;
+    public static Passenger passenger;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain chain)
@@ -76,11 +82,25 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             // Load the user (Driver) based on email/username from the token
             driver = driverRepository.findByEmail(username).orElse(null);
+            passenger = passengerRepository.findByEmail(username).orElse(null);
 
             if (driver != null) {
                 // In a real application, you'd implement a DriverDetailsService similar to UserDetailsService
                 UserDetails userDetails = new org.springframework.security.core.userdetails.User(
                         driver.getEmail(), "", new ArrayList<>()); // Replace with actual authorities if applicable
+
+                // Create authentication token for Spring Security
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
+
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                // Set authentication in the SecurityContext
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } else if (passenger != null) {
+                // In a real application, you'd implement a DriverDetailsService similar to UserDetailsService
+                UserDetails userDetails = new org.springframework.security.core.userdetails.User(
+                        passenger.getEmail(), "", new ArrayList<>()); // Replace with actual authorities if applicable
 
                 // Create authentication token for Spring Security
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(

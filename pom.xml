@@ -32,7 +32,7 @@
     <dependencies>
         <dependency>
             <groupId>com.manage</groupId>
-            <artifactId>medsphere_entity</artifactId>
+            <artifactId>carrive</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
